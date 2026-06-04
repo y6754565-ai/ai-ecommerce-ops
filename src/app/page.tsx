@@ -132,6 +132,41 @@ export default function Home() {
     [result]
   );
 
+  const startCompetitorAnalysis = useCallback(async () => {
+    if (!compTitle.trim()) return;
+    setCompAnalyzing(true);
+    setCompAnalysis("");
+    try {
+      const res = await fetch("/api/competitor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: compTitle, price: compPrice, sales: compSales }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error);
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error("无法读取");
+      const decoder = new TextDecoder();
+      let text = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        text += decoder.decode(value, { stream: true });
+        setCompAnalysis(text);
+      }
+    } catch (err) {
+      setCompAnalysis("错误: " + (err instanceof Error ? err.message : "未知"));
+    } finally {
+      setCompAnalyzing(false);
+    }
+  }, [compTitle, compPrice, compSales]);
+
+  const resetCompetitor = useCallback(() => {
+    setCompTitle("");
+    setCompPrice("");
+    setCompSales("");
+    setCompAnalysis("");
+  }, []);
+
   const previewReviews = result
     ? previewExpanded
       ? result.reviews
