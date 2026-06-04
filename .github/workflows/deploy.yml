@@ -16,7 +16,7 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: mv src/app/api src/app/api.bak
-      - run: npm run build
+      - run: GITHUB_PAGES=true npm run build
       - run: mv src/app/api.bak src/app/api
       - uses: peaceiris/actions-gh-pages@v4
         with:

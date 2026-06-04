@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
-  basePath: "/ai-ecommerce-ops",
+  output: process.env.GITHUB_PAGES === "true" ? "export" : undefined,
+  basePath: process.env.GITHUB_PAGES === "true" ? "/ai-ecommerce-ops" : "",
   images: { unoptimized: true },
 };
 

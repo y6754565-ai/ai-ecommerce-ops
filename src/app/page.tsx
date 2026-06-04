@@ -34,6 +34,13 @@ export default function Home() {
   const [analyses, setAnalyses] = useState<Partial<Record<AnalysisType, string>>>({});
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
+  // 竞品分析
+  const [compTitle, setCompTitle] = useState("");
+  const [compPrice, setCompPrice] = useState("");
+  const [compSales, setCompSales] = useState("");
+  const [compAnalyzing, setCompAnalyzing] = useState(false);
+  const [compAnalysis, setCompAnalysis] = useState("");
+
   useEffect(() => {
     const blockDrop = (e: Event) => e.preventDefault();
     window.addEventListener("dragover", blockDrop, true);
@@ -292,6 +299,68 @@ export default function Home() {
             <p className="text-sm text-zinc-400">Excel 文件需包含 &ldquo;初评&rdquo; 或 &ldquo;评论&rdquo; 列</p>
           </div>
         )}
+
+        {/* Competitor Analysis Section */}
+        <div className="rounded-2xl border border-zinc-200 bg-white">
+          <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
+            <h2 className="text-sm font-medium text-zinc-700">竞品分析</h2>
+            <span className="text-xs text-zinc-400">输入信息 → AI分析</span>
+          </div>
+          <div className="p-5 space-y-3">
+            <input
+              type="text"
+              value={compTitle}
+              onChange={(e) => setCompTitle(e.target.value)}
+              placeholder="商品标题 *"
+              className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-400"
+            />
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={compPrice}
+                onChange={(e) => setCompPrice(e.target.value)}
+                placeholder="价格"
+                className="flex-1 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-400"
+              />
+              <input
+                type="text"
+                value={compSales}
+                onChange={(e) => setCompSales(e.target.value)}
+                placeholder="销量"
+                className="flex-1 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-400"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={startCompetitorAnalysis}
+                disabled={compAnalyzing || !compTitle.trim()}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                  compAnalyzing || !compTitle.trim()
+                    ? "cursor-not-allowed bg-zinc-100 text-zinc-400"
+                    : "bg-zinc-900 text-white hover:bg-zinc-800 active:scale-95"
+                }`}
+              >
+                {compAnalyzing ? (
+                  <><span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-zinc-400 border-t-white" />分析中</>
+                ) : (
+                  <><SparkleIcon />竞品分析</>
+                )}
+              </button>
+              {(compTitle || compAnalysis) && (
+                <button onClick={resetCompetitor} className="rounded-lg px-3 py-2 text-xs text-zinc-500 hover:bg-zinc-100">
+                  清空
+                </button>
+              )}
+            </div>
+            {compAnalysis && (
+              <div className="mt-3 rounded-xl bg-zinc-50 p-4">
+                <div className="prose prose-sm prose-zinc max-w-none whitespace-pre-wrap text-sm leading-relaxed text-zinc-700">
+                  {compAnalysis}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );
