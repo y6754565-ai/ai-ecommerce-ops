@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { parseExcelFile, type ParseResult } from "@/lib/excelParser";
+import { parseExcelFile } from "@/lib/excelParser";
+import type { ParseResult } from "@/lib/types";
 import type { AnalysisType } from "@/lib/openai";
 
 const ANALYSIS_LABELS: Record<AnalysisType, string> = {
