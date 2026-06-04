@@ -22,6 +22,9 @@ const ANALYSIS_TYPES: AnalysisType[] = [
 ];
 
 export default function Home() {
+  // GitHub Pages 静态站点检测（无 API 支持）
+  const isStatic = typeof window !== "undefined" && !window.location.hostname.includes("vercel") && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1");
+
   const [result, setResult] = useState<ParseResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -117,7 +120,7 @@ export default function Home() {
         text += decoder.decode();
         setAnalyses((prev) => ({ ...prev, [type]: text }));
       } catch (err) {
-        setAnalysisError(err instanceof Error ? err.message : "分析服务异常");
+        setAnalysisError(isStatic ? "AI分析需要后端API，请使用 Vercel 版（需VPN）或本地 localhost:3001" : (err instanceof Error ? err.message : "分析服务异常"));
       } finally {
         setAnalyzing(false);
       }
