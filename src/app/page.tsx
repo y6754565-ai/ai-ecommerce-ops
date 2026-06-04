@@ -11,7 +11,6 @@ const ANALYSIS_LABELS: Record<AnalysisType, string> = {
   negativeTop10: "差评TOP10",
   keywords: "高频关键词",
   comprehensive: "整合报告",
-  competitor: "竞品分析",
 };
 
 const ANALYSIS_TYPES: AnalysisType[] = [
@@ -35,12 +34,6 @@ export default function Home() {
   const [analyses, setAnalyses] = useState<Partial<Record<AnalysisType, string>>>({});
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
-  // 竞品分析
-  const [compTitle, setCompTitle] = useState("");
-  const [compPrice, setCompPrice] = useState("");
-  const [compSales, setCompSales] = useState("");
-  const [compAnalyzing, setCompAnalyzing] = useState(false);
-  const [compAnalysis, setCompAnalysis] = useState("");
 
   useEffect(() => {
     const blockDrop = (e: Event) => e.preventDefault();
@@ -131,41 +124,6 @@ export default function Home() {
     },
     [result]
   );
-
-  const startCompetitorAnalysis = useCallback(async () => {
-    if (!compTitle.trim()) return;
-    setCompAnalyzing(true);
-    setCompAnalysis("");
-    try {
-      const res = await fetch("/api/competitor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: compTitle, price: compPrice, sales: compSales }),
-      });
-      if (!res.ok) throw new Error((await res.json()).error);
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("无法读取");
-      const decoder = new TextDecoder();
-      let text = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        text += decoder.decode(value, { stream: true });
-        setCompAnalysis(text);
-      }
-    } catch (err) {
-      setCompAnalysis("错误: " + (err instanceof Error ? err.message : "未知"));
-    } finally {
-      setCompAnalyzing(false);
-    }
-  }, [compTitle, compPrice, compSales]);
-
-  const resetCompetitor = useCallback(() => {
-    setCompTitle("");
-    setCompPrice("");
-    setCompSales("");
-    setCompAnalysis("");
-  }, []);
 
   const previewReviews = result
     ? previewExpanded
