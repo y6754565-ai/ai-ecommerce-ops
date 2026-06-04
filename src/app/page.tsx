@@ -11,6 +11,7 @@ const ANALYSIS_LABELS: Record<AnalysisType, string> = {
   negativeTop10: "差评TOP10",
   keywords: "高频关键词",
   comprehensive: "整合报告",
+  competitor: "竞品分析",
 };
 
 const ANALYSIS_TYPES: AnalysisType[] = [
