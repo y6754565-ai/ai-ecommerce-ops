@@ -1,9 +1,18 @@
 import OpenAI from "openai";
 
-export const client = new OpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.DEEPSEEK_API_KEY,
-});
+let _client: OpenAI | null = null;
+
+function getClient(): OpenAI {
+  if (!_client) {
+    _client = new OpenAI({
+      baseURL: "https://api.deepseek.com",
+      apiKey: process.env.DEEPSEEK_API_KEY,
+    });
+  }
+  return _client;
+}
+
+export { getClient as client };
 
 export const ANALYSIS_PROMPTS = {
   review: `你是一个专业的电商运营分析师。用户会给你一批商品评论数据，请从以下维度进行分析：

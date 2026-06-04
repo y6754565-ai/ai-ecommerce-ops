@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       .map((r, i) => `${i + 1}. ${r}`)
       .join("\n");
 
-    const stream = await client.chat.completions.create({
+    const stream = await client().chat.completions.create({
       model: "deepseek-chat",
       messages: [
         { role: "system", content: prompt },
