@@ -22,8 +22,6 @@ const ANALYSIS_TYPES: AnalysisType[] = [
 ];
 
 export default function Home() {
-  // GitHub Pages 静态站点检测（无 API 支持）
-  const isStatic = typeof window !== "undefined" && !window.location.hostname.includes("vercel") && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1");
 
   const [result, setResult] = useState<ParseResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -104,6 +102,10 @@ export default function Home() {
           body: JSON.stringify({ reviews: result.reviews, type }),
         });
         if (!res.ok) {
+          const ct = res.headers.get("content-type") || "";
+          if (ct.includes("text/html") || !ct.includes("json")) {
+            throw new Error("AI分析需要后端API");
+          }
           const err = await res.json();
           throw new Error(err.error || "分析失败");
         }
@@ -120,7 +122,8 @@ export default function Home() {
         text += decoder.decode();
         setAnalyses((prev) => ({ ...prev, [type]: text }));
       } catch (err) {
-        setAnalysisError(isStatic ? "AI分析需要后端API，请使用 Vercel 版（需VPN）或本地 localhost:3001" : (err instanceof Error ? err.message : "分析服务异常"));
+        const msg = err instanceof Error ? err.message : String(err);
+        setAnalysisError(msg);
       } finally {
         setAnalyzing(false);
       }
